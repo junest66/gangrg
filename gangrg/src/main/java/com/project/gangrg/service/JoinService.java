@@ -1,5 +1,9 @@
 package com.project.gangrg.service;
 
+import static com.project.gangrg.common.exception.ErrorCode.*;
+
+import com.project.gangrg.common.exception.CustomException;
+import com.project.gangrg.common.exception.ErrorCode;
 import com.project.gangrg.domain.Neighborhood;
 import com.project.gangrg.domain.User;
 import com.project.gangrg.dto.UserJoinRequest;
@@ -23,7 +27,7 @@ public class JoinService {
     @Transactional
     public User signup(UserJoinRequest userJoinRequest) {
         String encodePassword = bCryptPasswordEncoder.encode(userJoinRequest.getPassword());
-        Neighborhood neighborhood = neighborhoodRepository.findById(userJoinRequest.getNeighborhoodId()).orElseThrow(() -> new IllegalArgumentException("해당 동네가 존재하지 않습니다."));
+        Neighborhood neighborhood = neighborhoodRepository.findById(userJoinRequest.getNeighborhoodId()).orElseThrow(() -> new CustomException(NEIGHBORHOOD_NOT_FOUND));
         validateSignup(userJoinRequest.getEmail(), userJoinRequest.getNickname());
         User user = userJoinRequest.toEntity(neighborhood, encodePassword);
         return userRepository.save(user);
@@ -31,11 +35,11 @@ public class JoinService {
 
     private void validateSignup(String email, String nickname) {
         if (userRepository.existsByEmail(email)) {
-            throw new DuplicateKeyException("아이디가 중복입니다.");
+            throw new CustomException(DUPLICATE_EMAIL);
         }
 
         if (userRepository.existsByNickname(nickname)) {
-            throw new DuplicateKeyException("닉네임이 중복입니다.");
+            throw new CustomException(DUPLICATE_NICKNAME);
         }
     }
 }
