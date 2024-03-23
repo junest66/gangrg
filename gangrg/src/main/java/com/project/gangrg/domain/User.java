@@ -13,11 +13,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.Fetch;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -64,4 +64,16 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Builder
+    public User(Neighborhood neighborhood, String email, String nickname, String name, String password, String phone, Role role) {
+        this.neighborhood = neighborhood;
+        this.email = email;
+        this.nickname = nickname;
+        this.name = name;
+        this.password = password;
+        this.isAlert = true;
+        this.isActive = true;
+        this.phone = phone;
+        this.role = role;
+    }
 }
